@@ -103,7 +103,7 @@ public class BirdAgent : Agent
         {
             if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
             {
-                if (modelNum > GameControl.instance.maxTrainNum)
+                if (modelNum > GameControl.instance.nnmodelList.Count)
                 {
                     GameControl.instance.AppExit();
                 }
@@ -179,10 +179,7 @@ public class BirdAgent : Agent
 
     private void SetModel(int trainNum)
     {
-        var resourcesArray = Resources.LoadAll<NNModel>(GameControl.instance.folderName);
-        Array.Sort(resourcesArray);
-
-        GetComponent<BehaviorParameters>().Model = resourcesArray[trainNum];
+        GetComponent<BehaviorParameters>().Model = GameControl.instance.nnmodelList[trainNum];
         eventLog.gameNum = 0;
     }
 }

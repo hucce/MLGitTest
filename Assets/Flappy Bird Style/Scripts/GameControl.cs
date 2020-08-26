@@ -2,6 +2,10 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEditor;
+using Unity.Barracuda;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 public class GameControl : MonoBehaviour
 {
@@ -14,11 +18,12 @@ public class GameControl : MonoBehaviour
     public bool swapNNModel = false;
     public int minRecordGame = 2;
     public int maxRecordGame = 12;
-    public int maxTrainNum = 20;
     public string folderName = "";
+    public List<NNModel> nnmodelList = new List<NNModel>();
 
     private void Awake()
     {
+        ListupModel();
         maxRecordGame = minRecordGame + maxRecordGame;
 
         if (record)
@@ -63,5 +68,32 @@ public class GameControl : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    private void ListupModel()
+    {
+        var resourcesArray = Resources.LoadAll<NNModel>(folderName);
+        nnmodelList = resourcesArray.ToList();
+
+        nnmodelList.Sort(delegate (NNModel first, NNModel second)
+        {
+            var name1 = int.Parse(first.name.Split('-')[1]);
+            var name2 = int.Parse(second.name.Split('-')[1]);
+
+            if (name1 > name2)
+            {
+                return 1;
+            }
+            else if (name1 < name2)
+            {
+                return -1;
+            }
+            else
+            {
+                return 0;
+            }
+        });
+
+        Debug.Log("리소스정렬");
     }
 }
