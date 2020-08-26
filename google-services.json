@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "906907501771",
+    "firebase_url": "https://flippybird-ml.firebaseio.com",
+    "project_id": "flippybird-ml",
+    "storage_bucket": "flippybird-ml.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906907501771:android:9b45f987638b6f2141074e",
+        "android_client_info": {
+          "package_name": "com.DevArc.FlippybirdML"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906907501771-88fok0eb9hpilss5nu1sqjevq4u4oa4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7IXYmIQeltePQM1evc62raVc5VP-n_44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906907501771-88fok0eb9hpilss5nu1sqjevq4u4oa4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
