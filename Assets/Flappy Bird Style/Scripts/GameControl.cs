@@ -19,6 +19,7 @@ public class GameControl : MonoBehaviour
     public int minRecordGame = 2;
     public int maxRecordGame = 12;
     public string folderName = "";
+    public int maxModel = 30;
     public List<NNModel> nnmodelList = new List<NNModel>();
 
     private void Awake()

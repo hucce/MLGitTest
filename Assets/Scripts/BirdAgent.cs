@@ -103,7 +103,7 @@ public class BirdAgent : Agent
         {
             if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
             {
-                if (modelNum > GameControl.instance.nnmodelList.Count)
+                if (modelNum >= GameControl.instance.maxModel)
                 {
                     GameControl.instance.AppExit();
                 }
