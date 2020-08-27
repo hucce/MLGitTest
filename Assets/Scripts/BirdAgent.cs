@@ -13,6 +13,7 @@ public class BirdAgent : Agent
     private int modelNum = 0;
     private int overNum = 0;
     private int clearNum = 0;
+    private int clearCheck = 0;
 
     public override void Initialize()
     {
@@ -67,6 +68,11 @@ public class BirdAgent : Agent
         {
             if (birdControl.isClear)
             {
+                if (eventLog.gameNum > GameControl.instance.minRecordGame)
+                {
+                    clearCheck++;
+                }
+
                 //Debug.Log("클리어");
                 eventLog.clearStep = eventLog.step;
                 clearNum++;
@@ -99,6 +105,11 @@ public class BirdAgent : Agent
         eventLog.gameNum += 1;
         eventLog.step = 0;
 
+        if (clearCheck >= (GameControl.instance.maxRecordGame - GameControl.instance.minRecordGame))
+        {
+            Debug.Log("모두 성공: " + modelNum);
+        }
+
         if (GameControl.instance.swapNNModel)
         {
             if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
@@ -109,10 +120,8 @@ public class BirdAgent : Agent
                 }
                 else
                 {
-                    modelNum++;
                     if (GameControl.instance.swapNNModel)
                     {
-                        eventLog.ID = modelNum.ToString();
                         SetModel(modelNum);
                     }
                 }
@@ -180,6 +189,10 @@ public class BirdAgent : Agent
     private void SetModel(int trainNum)
     {
         GetComponent<BehaviorParameters>().Model = GameControl.instance.nnmodelList[trainNum];
+        modelNum++;
+        eventLog.ID = modelNum.ToString();
         eventLog.gameNum = 0;
+        overNum = 0;
+        clearNum = 0;
     }
 }
