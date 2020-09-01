@@ -23,9 +23,9 @@ public class SqlLite : MonoBehaviour
 
     public void WriteSql(EventLog _eventLog)
     {
+        _eventLog.dateTime = DateTime.Now;
         // conn = "URI=file:" + Application.dataPath + "/DB Browser로 만든 데이터베이스 이름.s3db";
         string conn = "URI=file:" + Application.streamingAssetsPath + "/sqlSetML.db";
-        //string conn = "URI=file:" + Application.streamingAssetsPath + "/test.db";
 
         // IDbConnection
         IDbConnection dbconn;

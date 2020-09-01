@@ -5,6 +5,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Policies;
 using Unity.Barracuda;
 using System;
+using System.Security.AccessControl;
 
 public class BirdAgent : Agent
 {
@@ -14,6 +15,7 @@ public class BirdAgent : Agent
     private int overNum = 0;
     private int clearNum = 0;
     private int clearCheck = 0;
+    private bool nextGame = false;
 
     public override void Initialize()
     {
@@ -24,6 +26,7 @@ public class BirdAgent : Agent
     {
         if (GameControl.instance.swapNNModel)
         {
+            modelNum = GameControl.instance.startModelIndex;
             SetModel(modelNum);
         }
     }
@@ -102,13 +105,18 @@ public class BirdAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        nextGame = true;
+
+        if (GameControl.instance.record == false)
+        {
+            NextGame();
+        }
+    }
+
+    private void NextGame()
+    {
         eventLog.gameNum += 1;
         eventLog.step = 0;
-
-        if (clearCheck >= (GameControl.instance.maxRecordGame - GameControl.instance.minRecordGame))
-        {
-            Debug.Log("모두 성공: " + modelNum);
-        }
 
         if (GameControl.instance.swapNNModel)
         {
@@ -150,6 +158,7 @@ public class BirdAgent : Agent
                 PlayerGUI.instance.ShowGameNum(eventLog.gameNum - GameControl.instance.minRecordGame, maxGame, overNum - GameControl.instance.minRecordGame, clearNum);
             }
         }
+        nextGame = false;
     }
 
     private void Update()
@@ -166,22 +175,25 @@ public class BirdAgent : Agent
                 SqlLite.instance.WriteSql(eventLog);
             }
 
-            //Debug.Log("점프 로그 확인: " + eventLog.jump);
+            // 다음 게임 으로 넘어갔다면?
+            if (nextGame)
+            {
+                NextGame();
+                if (eventLog.clearStep != 0)
+                {
+                    eventLog.clearStep = 0;
+                }
+
+                if (eventLog.gameoverStep != 0)
+                {
+                    eventLog.gameoverStep = 0;
+                }
+            }
 
             // 스탭에서 수정된 값을 먼저 쓰고 0으로
             if (eventLog.jump != 0)
             {
                 eventLog.jump = 0;
-            }
-
-            if (eventLog.clearStep != 0)
-            {
-                eventLog.clearStep = 0;
-            }
-
-            if (eventLog.gameoverStep != 0)
-            {
-                eventLog.gameoverStep = 0;
             }
         }
     }
@@ -189,10 +201,12 @@ public class BirdAgent : Agent
     private void SetModel(int trainNum)
     {
         GetComponent<BehaviorParameters>().Model = GameControl.instance.nnmodelList[trainNum];
-        modelNum++;
-        eventLog.ID = modelNum.ToString();
+        eventLog.ID = (modelNum + 1).ToString();
+        modelNum += GameControl.instance.plusModelIndex;
+        Debug.Log("모델명: " + GetComponent<BehaviorParameters>().Model.name + " 모델번호: " + modelNum + " 성공수: " + clearNum);
         eventLog.gameNum = 0;
         overNum = 0;
         clearNum = 0;
+        clearCheck = 0;
     }
 }
