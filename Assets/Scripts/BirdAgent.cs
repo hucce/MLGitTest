@@ -14,7 +14,6 @@ public class BirdAgent : Agent
     private int modelNum = 0;
     private int overNum = 0;
     private int clearNum = 0;
-    private int clearCheck = 0;
     private bool nextGame = false;
 
     public override void Initialize()
@@ -60,9 +59,13 @@ public class BirdAgent : Agent
         // 죽음
         if (birdControl.isDead)
         {
+            if (eventLog.gameNum > GameControl.instance.minRecordGame)
+            {
+                overNum++;
+            }
+
             //Debug.Log("죽음");
             eventLog.gameoverStep = eventLog.step;
-            overNum++;
             // 학습 종료
             AddReward(-1f);
             EndEpisode();
@@ -73,12 +76,11 @@ public class BirdAgent : Agent
             {
                 if (eventLog.gameNum > GameControl.instance.minRecordGame)
                 {
-                    clearCheck++;
+                    clearNum++;
                 }
 
                 //Debug.Log("클리어");
                 eventLog.clearStep = eventLog.step;
-                clearNum++;
                 // 학습 종료
                 AddReward(1f);
                 EndEpisode();
@@ -118,20 +120,18 @@ public class BirdAgent : Agent
         eventLog.gameNum += 1;
         eventLog.step = 0;
 
+        if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
+        {
+            GameControl.instance.AppExit();
+        }
+
         if (GameControl.instance.swapNNModel)
         {
             if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
             {
-                if (modelNum >= GameControl.instance.maxModel)
+                if (GameControl.instance.swapNNModel)
                 {
-                    GameControl.instance.AppExit();
-                }
-                else
-                {
-                    if (GameControl.instance.swapNNModel)
-                    {
-                        SetModel(modelNum);
-                    }
+                    SetModel(modelNum);
                 }
             }
         }
@@ -155,7 +155,7 @@ public class BirdAgent : Agent
             if (eventLog.gameNum > GameControl.instance.minRecordGame)
             {
                 int maxGame = GameControl.instance.maxRecordGame - GameControl.instance.minRecordGame;
-                PlayerGUI.instance.ShowGameNum(eventLog.gameNum - GameControl.instance.minRecordGame, maxGame, overNum - GameControl.instance.minRecordGame, clearNum);
+                PlayerGUI.instance.ShowGameNum(eventLog.gameNum - GameControl.instance.minRecordGame, maxGame, overNum, clearNum);
             }
         }
         nextGame = false;
@@ -207,6 +207,5 @@ public class BirdAgent : Agent
         eventLog.gameNum = 0;
         overNum = 0;
         clearNum = 0;
-        clearCheck = 0;
     }
 }

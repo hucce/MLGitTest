@@ -8,6 +8,8 @@
 /Assets/Demonstrations*
 /Assets/ML-Agents/Timers*
 /csharp_timers.json
+/com.unity.ml-agents
+/com.unity.ml-agents.extensions
 
 # Environemnt logfile
 *Project.log
