@@ -59,11 +59,6 @@ public class BirdAgent : Agent
         // 죽음
         if (birdControl.isDead)
         {
-            if (eventLog.gameNum > GameControl.instance.minRecordGame)
-            {
-                overNum++;
-            }
-
             //Debug.Log("죽음");
             eventLog.gameoverStep = eventLog.step;
             // 학습 종료
@@ -74,11 +69,6 @@ public class BirdAgent : Agent
         {
             if (birdControl.isClear)
             {
-                if (eventLog.gameNum > GameControl.instance.minRecordGame)
-                {
-                    clearNum++;
-                }
-
                 //Debug.Log("클리어");
                 eventLog.clearStep = eventLog.step;
                 // 학습 종료
@@ -118,16 +108,17 @@ public class BirdAgent : Agent
     private void NextGame()
     {
         eventLog.gameNum += 1;
+        Debug.Log("다음 게임: " + eventLog.gameNum);
         eventLog.step = 0;
 
-        if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
+        if (eventLog.gameNum > GameControl.instance.maxRecordGame)
         {
             GameControl.instance.AppExit();
         }
 
         if (GameControl.instance.swapNNModel)
         {
-            if (eventLog.gameNum >= GameControl.instance.maxRecordGame)
+            if (eventLog.gameNum > GameControl.instance.maxRecordGame)
             {
                 if (GameControl.instance.swapNNModel)
                 {
@@ -170,8 +161,9 @@ public class BirdAgent : Agent
 
         if (GameControl.instance.record)
         {
-            if (eventLog.gameNum >= GameControl.instance.minRecordGame)
+            if (eventLog.gameNum > GameControl.instance.minRecordGame)
             {
+                Debug.Log("게임수: " + eventLog.gameNum);
                 SqlLite.instance.WriteSql(eventLog);
             }
 
@@ -179,14 +171,23 @@ public class BirdAgent : Agent
             if (nextGame)
             {
                 NextGame();
+
                 if (eventLog.clearStep != 0)
                 {
                     eventLog.clearStep = 0;
+                    if (eventLog.gameNum > GameControl.instance.minRecordGame)
+                    {
+                        clearNum++;
+                    }
                 }
 
                 if (eventLog.gameoverStep != 0)
                 {
                     eventLog.gameoverStep = 0;
+                    if (eventLog.gameNum > GameControl.instance.minRecordGame)
+                    {
+                        overNum++;
+                    }
                 }
             }
 
